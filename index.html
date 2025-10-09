@@ -91,7 +91,7 @@
     
     <iframe 
         id="mainFrame" 
-        src="https://115.159.67.54:3443/" 
+        src="http://115.159.67.54:3443/" 
         onload="frameLoaded()"
         onerror="frameError()">
     </iframe>
@@ -127,7 +127,7 @@
                     '<div class="status">如果是自签名证书，浏览器可能显示安全警告</div>';
                 
                 setTimeout(function() {
-                    document。getElementById('mainFrame')。src = 'https://115.159.67.54:3443/?retry=' + retryCount;
+                    document。getElementById('mainFrame')。src = 'http://115.159.67.54:3443/?retry=' + retryCount;
                 }, 2000);
             } else {
                 document。getElementById('loading')。innerHTML = 
@@ -153,7 +153,7 @@
         }
         
         function trustCertificate() {
-            window。open('https://115.159.67.54:3443/'， '_blank');
+            window。open('http://115.159.67.54:3443/'， '_blank');
             
             document.getElementById('loading').innerHTML = 
                 '<h2>🔒 请在新标签页中信任证书</h2>' +
