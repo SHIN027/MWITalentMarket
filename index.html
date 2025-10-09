@@ -172,7 +172,7 @@
                     sendRequest('http://115.159.67.54:3030/?retry=' + retryCount);
                 }, 2000);
             } else {
-                document.getElementById('loading').innerHTML = 
+                document.getElementById('loading')。innerHTML = 
                     '<h2>❌ 连接服务器失败</h2>' +
                     '<p>可能的原因：</p>' +
                     '<ul style="text-align: left; display: inline-block; margin: 15px 0;">' +
@@ -196,7 +196,7 @@
         }
         
         function enableMixedContent() {
-            document.getElementById('loading').innerHTML = 
+            document。getElementById('loading')。innerHTML = 
                 '<h2>🛡️ 启用混合内容</h2>' +
                 '<p>请按以下步骤操作：</p>' +
                 '<ol style="text-align: left; display: inline-block; margin: 15px 0;">' +
@@ -213,9 +213,9 @@
         }
         
         function openDirect() {
-            window.open('http://115.159.67.54:3030/', '_blank');
+            window。open('http://115.159.67.54:3030/'， '_blank');
             
-            document.getElementById('loading').innerHTML = 
+            document。getElementById('loading')。innerHTML = 
                 '<h2>🔗 已在新标签页打开</h2>' +
                 '<p>如果新标签页正常显示，说明服务器运行正常。</p>' +
                 '<p>请返回此页面并启用混合内容以在当前页面使用。</p>' +
@@ -225,13 +225,13 @@
         }
         
         // 页面加载完成后开始请求
-        window.onload = function() {
+        window。onload = function() {
             updateStatus('正在使用AJAX连接服务器...');
             sendRequest('http://115.159.67.54:3030/');
             
             // 设置超时处理
             loadTimeout = setTimeout(function() {
-                if (document.getElementById('loading').style.display !== 'none') {
+                if (document。getElementById('loading')。style.display !== 'none') {
                     updateStatus('连接超时，正在重试...');
                     handleRequestError();
                 }
@@ -241,7 +241,7 @@
         // 页面可见性变化时重新尝试连接
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden && retryCount > 0 && retryCount <= maxRetries) {
-                location.reload();
+                location。reload();
             }
         });
     </script>
