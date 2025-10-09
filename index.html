@@ -97,12 +97,12 @@
     </iframe>
     
     <script>
-        let loadTimeout;
-        let retryCount = 0;
-        const maxRetries = 3;
+        var loadTimeout;
+        var retryCount = 0;
+        var maxRetries = 3;
         
         function updateStatus(message) {
-            const statusEl = document.querySelector('.status');
+            var statusEl = document.querySelector('.status');
             if (statusEl) {
                 statusEl.textContent = message;
             }
@@ -112,7 +112,7 @@
             clearTimeout(loadTimeout);
             document.getElementById('loading').style.display = 'none';
             document.getElementById('mainFrame').classList.add('loaded');
-            console.log('✅ HTTPS页面加载成功');
+            console.log('HTTPS页面加载成功');
         }
         
         function frameError() {
@@ -120,82 +120,74 @@
             retryCount++;
             
             if (retryCount <= maxRetries) {
-                document.getElementById('loading').innerHTML = `
-                    <div class="spinner"></div>
-                    <h2>🔄 连接重试中</h2>
-                    <p>第 ${retryCount} 次尝试连接HTTPS服务器...</p>
-                    <div class="status">如果是自签名证书，浏览器可能显示安全警告</div>
-                `;
+                document.getElementById('loading')。innerHTML = 
+                    '<div class="spinner"></div>' +
+                    '<h2>🔄 连接重试中</h2>' +
+                    '<p>第 ' + retryCount + ' 次尝试连接HTTPS服务器...</p>' +
+                    '<div class="status">如果是自签名证书，浏览器可能显示安全警告</div>';
                 
-                setTimeout(() => {
-                    document.getElementById('mainFrame').src = 'https://115.159.67.54:3443/?retry=' + retryCount;
+                setTimeout(function() {
+                    document。getElementById('mainFrame')。src = 'https://115.159.67.54:3443/?retry=' + retryCount;
                 }, 2000);
             } else {
-                document.getElementById('loading').innerHTML = `
-                    <h2>⚠️ 连接HTTPS服务器失败</h2>
-                    <p>可能的原因：</p>
-                    <ul style="text-align: left; display: inline-block; margin: 15px 0;">
-                        <li>浏览器阻止了自签名证书</li>
-                        <li>防火墙未开放3443端口</li>
-                        <li>HTTPS服务器未正常运行</li>
-                    </ul>
-                    <div style="margin: 20px 0;">
-                        <button class="retry-btn" onclick="trustCertificate()" style="background: #28a745;">
-                            🔒 信任证书并访问
-                        </button>
-                        <button class="retry-btn" onclick="useHttp()" style="background: #ffc107; color: #000;">
-                            🌐 使用HTTP版本
-                        </button>
-                        <button class="retry-btn" onclick="location.reload()">
-                            🔄 重新加载
-                        </button>
-                    </div>
-                `;
+                document。getElementById('loading')。innerHTML = 
+                    '<h2>⚠️ 连接HTTPS服务器失败</h2>' +
+                    '<p>可能的原因：</p>' +
+                    '<ul style="text-align: left; display: inline-block; margin: 15px 0;">' +
+                    '<li>浏览器阻止了自签名证书</li>' +
+                    '<li>防火墙未开放3443端口</li>' +
+                    '<li>HTTPS服务器未正常运行</li>' +
+                    '</ul>' +
+                    '<div style="margin: 20px 0;">' +
+                    '<button class="retry-btn" onclick="trustCertificate()" style="background: #28a745;">' +
+                    '🔒 信任证书并访问' +
+                    '</button>' +
+                    '<button class="retry-btn" onclick="useHttp()" style="background: #ffc107; color: #000;">' +
+                    '🌐 使用HTTP版本' +
+                    '</button>' +
+                    '<button class="retry-btn" onclick="location.reload()">' +
+                    '🔄 重新加载' +
+                    '</button>' +
+                    '</div>';
             }
         }
         
         function trustCertificate() {
-            // 在新标签页中打开HTTPS地址，让用户手动信任证书
-            window.open('https://115.159.67.54:3443/', '_blank');
+            window。open('https://115.159.67.54:3443/'， '_blank');
             
-            document.getElementById('loading').innerHTML = `
-                <h2>🔒 请在新标签页中信任证书</h2>
-                <p>步骤：</p>
-                <ol style="text-align: left; display: inline-block; margin: 15px 0;">
-                    <li>在新打开的标签页中点击"高级"</li>
-                    <li>点击"继续前往 115.159.67.54（不安全）"</li>
-                    <li>信任证书后，回到此页面点击下方按钮</li>
-                </ol>
-                <button class="retry-btn" onclick="location.reload()">
-                    ✅ 已信任证书，重新加载
-                </button>
-            `;
+            document.getElementById('loading').innerHTML = 
+                '<h2>🔒 请在新标签页中信任证书</h2>' +
+                '<p>步骤：</p>' +
+                '<ol style="text-align: left; display: inline-block; margin: 15px 0;">' +
+                '<li>在新打开的标签页中点击"高级"</li>' +
+                '<li>点击"继续前往 115.159.67.54（不安全）"</li>' +
+                '<li>信任证书后，回到此页面点击下方按钮</li>' +
+                '</ol>' +
+                '<button class="retry-btn" onclick="location.reload()">' +
+                '✅ 已信任证书，重新加载' +
+                '</button>';
         }
         
         function useHttp() {
-            document.getElementById('loading').innerHTML = `
-                <div class="spinner"></div>
-                <h2>🌐 切换到HTTP连接</h2>
-                <p>正在加载HTTP版本...</p>
-                <div class="status">注意：HTTP连接不加密，安全性较低</div>
-            `;
+            document.getElementById('loading').innerHTML = 
+                '<div class="spinner"></div>' +
+                '<h2>🌐 切换到HTTP连接</h2>' +
+                '<p>正在加载HTTP版本...</p>' +
+                '<div class="status">注意：HTTP连接不加密，安全性较低</div>';
             
-            // 使用HTTP版本
-            document.getElementById('mainFrame').src = 'http://115.159.67.54:3030/';
+            document。getElementById('mainFrame')。src = 'http://115.159.67.54:3030/';
         }
         
-        // 设置加载超时
-        loadTimeout = setTimeout(() => {
-            if (!document.getElementById('mainFrame').classList.contains('loaded')) {
+        loadTimeout = setTimeout(function() {
+            if (!document。getElementById('mainFrame')。classList.contains('loaded')) {
                 updateStatus('连接超时，正在重试...');
                 frameError();
             }
-        }, 10000);
+        }， 10000);
         
-        // 页面可见性变化时重新尝试连接
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden && retryCount > 0 && retryCount <= maxRetries) {
-                location.reload();
+                location。reload();
             }
         });
     </script>
