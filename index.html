@@ -1,23 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>https://shin027.github.io/MWITalentMarket/</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>银河奶牛放置人才市场</title>
     <style>
-        body, html {
+        body， html {
             margin: 0;
             padding: 0;
             height: 100%;
             overflow: hidden;
+            font-family: Arial, sans-serif;
         }
+        
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%， -50%);
+            text-align: center;
+            z-index: 1000;
+        }
+        
         iframe {
             width: 100%;
             height: 100vh;
             border: none;
+            display: none;
+        }
+        
+        iframe.loaded {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <iframe src="http://115.159.67.54:3030/" frameborder="0"></iframe>
+    <div id="loading">
+        <h2>🚀 正在加载银河奶牛放置人才市场...</h2>
+        <p>请稍候</p>
+    </div>
+    
+    <iframe 
+        id="mainFrame" 
+        src="http://115.159.67.54:3030/" 
+        onload="frameLoaded()"
+        onerror="frameError()">
+    </iframe>
+    
+    <script>
+        function frameLoaded() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('mainFrame').classList.add('loaded');
+        }
+        
+        function frameError() {
+            document.getElementById('loading').innerHTML = 
+                '<h2>❌ 加载失败</h2><p>无法连接到服务器，请稍后重试</p>';
+        }
+        
+        // 5秒后如果还没加载完成，显示错误信息
+        setTimeout(() => {
+            if (!document.getElementById('mainFrame').classList.contains('loaded')) {
+                frameError();
+            }
+        }, 5000);
+    </script>
 </body>
 </html>
-
