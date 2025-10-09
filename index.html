@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>银河奶牛放置人才市场</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
     <style>
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
         #loading {
@@ -19,61 +21,217 @@
             transform: translate(-50%, -50%);
             text-align: center;
             z-index: 1000;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 90%;
         }
         
         #content {
             width: 100%;
             min-height: 100vh;
+            background: white;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .retry-btn {
+            margin-top: 15px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        .retry-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .status {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .status.trying {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status.failed {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .status.success {
+            background: #e8f5e8;
+            color: #2e7d32;
         }
     </style>
 </head>
 <body>
     <div id="loading">
-        <h2>🚀 正在加载银河奶牛放置人才市场...</h2>
-        <p>请稍候</p>
+        <div class="spinner"></div>
+        <h2>🚀 银河奶牛放置人才市场</h2>
+        <p>正在连接服务器...</p>
+        <div id="status"></div>
     </div>
     
     <div id="content"></div>
     
     <script>
-        async function loadContent() {
-            try {
-                // 使用代理服务或直接请求
-                const response = await fetch('http://115.159.67.54:3030/');
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                let html = await response.text();
-                
-                // 修复相对路径问题
-                html = html.replace(
-                    /(src|href)=["'](?!http|\/\/|data:)([^"']*?)["']/gi,
-                    '$1="http://115.159.67.54:3030/$2"'
-                );
-                
-                // 注入基础URL
-                html = html.replace(
-                    '<head>',
-                    '<head><base href="http://115.159.67.54:3030/">'
-                );
-                
-                document.getElementById('content').innerHTML = html;
-                document.getElementById('loading').style.display = 'none';
-                
-            } catch (error) {
-                console.error('加载失败:', error);
-                document.getElementById('loading').innerHTML = 
-                    `<h2>❌ 加载失败</h2>
-                     <p>错误: ${error.message}</p>
-                     <p>请检查服务器是否正常运行</p>
-                     <button onclick="location.reload()">重试</button>`;
+        const loadingEl = document.getElementById('loading');
+        const contentEl = document.getElementById('content');
+        const statusEl = document.getElementById('status');
+        
+        // 多个代理服务列表
+        const proxyServices = [
+            'https://api.allorigins.win/raw?url=',
+            'https://cors-anywhere.herokuapp.com/',
+            'https://thingproxy.freeboard.io/fetch/',
+            'https://api.codetabs.com/v1/proxy?quest=',
+            // 直接尝试（可能被阻止，但值得一试）
+            ''
+        ];
+        
+        let currentProxyIndex = 0;
+        
+        function updateStatus(message, type = 'trying') {
+            statusEl.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        async function tryLoadWithProxy(proxyUrl, targetUrl) {
+            const fullUrl = proxyUrl + encodeURIComponent(targetUrl);
+            const directUrl = proxyUrl === '' ? targetUrl : fullUrl;
+            
+            updateStatus(`尝试连接: ${proxyUrl === '' ? '直连' : '代理服务 ' + (currentProxyIndex + 1)}`);
+            
+            const response = await fetch(directUrl, {
+                method: 'GET',
+                headers: proxyUrl === '' ? {} : {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                mode: proxyUrl === '' ? 'no-cors' : 'cors'
+            });
+            
+            if (!response.ok && response.status !== 0) {
+                throw new Error(`HTTP ${response.status}`);
             }
+            
+            return await response.text();
+        }
+        
+        async function loadContent() {
+            const targetUrl = 'http://115.159.67.54:3030/';
+            
+            for (let i = 0; i < proxyServices.length; i++) {
+                currentProxyIndex = i;
+                try {
+                    updateStatus(`正在尝试连接方式 ${i + 1}/${proxyServices.length}...`);
+                    
+                    let html = await tryLoadWithProxy(proxyServices[i], targetUrl);
+                    
+                    // 如果获取到内容
+                    if (html && html.trim()) {
+                        updateStatus('✅ 连接成功，正在加载内容...', 'success');
+                        
+                        // 修复相对路径
+                        html = html.replace(
+                            /(src|href|action)=["'](?!http|\/\/|data:|#)([^"']*?)["']/gi,
+                            '$1="http://115.159.67.54:3030/$2"'
+                        );
+                        
+                        // 注入基础URL
+                        html = html.replace(
+                            /<head>/i,
+                            '<head><base href="http://115.159.67.54:3030/">'
+                        );
+                        
+                        // 修复CSS中的URL
+                        html = html.replace(
+                            /url\((?!['"]?(?:data:|http|\/\/))(['"]?)([^)]*?)\1\)/gi,
+                            'url($1http://115.159.67.54:3030/$2$1)'
+                        );
+                        
+                        contentEl.innerHTML = html;
+                        loadingEl.style.display = 'none';
+                        
+                        // 重新执行脚本
+                        setTimeout(() => {
+                            const scripts = contentEl.querySelectorAll('script');
+                            scripts.forEach(script => {
+                                if (script.textContent && !script.src) {
+                                    try {
+                                        eval(script.textContent);
+                                    } catch (e) {
+                                        console.warn('脚本执行警告:', e);
+                                    }
+                                }
+                            });
+                        }, 100);
+                        
+                        return; // 成功加载，退出循环
+                    }
+                    
+                } catch (error) {
+                    console.warn(`代理 ${i + 1} 失败:`, error);
+                    updateStatus(`❌ 方式 ${i + 1} 失败: ${error.message}`, 'failed');
+                    
+                    if (i < proxyServices.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 1000)); // 等待1秒后尝试下一个
+                    }
+                }
+            }
+            
+            // 所有方式都失败了
+            loadingEl.innerHTML = `
+                <h2>❌ 无法连接到服务器</h2>
+                <p>已尝试所有连接方式，但都无法成功</p>
+                <div style="text-align: left; display: inline-block; margin: 15px 0;">
+                    <p><strong>可能的解决方案：</strong></p>
+                    <ul>
+                        <li>确认服务器 <code>115.159.67.54:3030</code> 正在运行</li>
+                        <li>检查服务器防火墙设置</li>
+                        <li>尝试配置服务器支持HTTPS</li>
+                        <li>使用VPN或更改网络环境</li>
+                    </ul>
+                </div>
+                <button class="retry-btn" onclick="location.reload()">
+                    🔄 重新尝试
+                </button>
+                <button class="retry-btn" onclick="window.open('http://115.159.67.54:3030/', '_blank')" style="margin-left: 10px; background: #28a745;">
+                    🔗 直接访问服务器
+                </button>
+            `;
         }
         
         // 页面加载完成后执行
         document.addEventListener('DOMContentLoaded', loadContent);
+        
+        // 添加错误处理
+        window.addEventListener('error', function(e) {
+            console.error('页面错误:', e);
+        });
     </script>
 </body>
 </html>
